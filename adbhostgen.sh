@@ -534,7 +534,12 @@ if ping -q -c 1 -W 1 google.com &> /dev/null; then
 	MPGETSSL https://raw.githubusercontent.com/m-parashar/adbhostgen/master/blacklists/blacklist | GREPFILTER > $blacklist
 	MPGETSSL https://raw.githubusercontent.com/m-parashar/adbhostgen/master/whitelists/whitelist | GREPFILTER > $whitelist
 	MPGETSSL https://raw.githubusercontent.com/m-parashar/adbhostgen/master/whitelists/fruitydomains > $base64wl
-	LC_ALL=C uudecode $base64wl && cat applewhitelist >> $whitelist && rm applewhitelist && rm $base64wl
+	if [ -z "$(which uudencode)" ]; then                                                                                        
+        LC_ALL=C openssl enc -base64 -d -in $base64wl >> $whitelist && rm applewhitelist && rm $base64wl                            
+        else                                                                                                                        
+        LC_ALL=C uudecode $base64wl && cat applewhitelist >> $whitelist && rm applewhitelist && rm $base64wl                        
+        fi
+	#LC_ALL=C uudecode $base64wl && cat applewhitelist >> $whitelist && rm applewhitelist && rm $base64wl
 
 else
 	lognecho "# NETWORK: DOWN | MODE: OFFLINE"
